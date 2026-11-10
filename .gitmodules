@@ -1,4 +1,4 @@
 [submodule "noahmp"]
-	path = noahmp
-	url = https://https://github.com/harsh-kamath/noahmp-gpu
-	branch = main
+    path = noahmp
+    url = https://https://github.com/harsh-kamath/noahmp-gpu
+    branch = main
