@@ -1,0 +1,24 @@
+# Invoke from the repository root after a clean CPU/GPU mode switch.
+include hrldas/user_build_options
+ACCELERATOR ?= gpu
+include hrldas/acc_build_options.mk
+
+PROBE_OBJS = noahmp/utility/Machine.o \
+  noahmp/src/ConstantDefineMod.o noahmp/src/ConfigVarType.o noahmp/src/ForcingVarType.o \
+  noahmp/src/EnergyVarType.o noahmp/src/WaterVarType.o noahmp/src/BiochemVarType.o \
+  noahmp/src/AccumulatedVarType.o noahmp/src/NoahmpStatusVarType.o noahmp/src/NoahmpVarType.o \
+  noahmp/src/NoahmpWorkspaceMod.o noahmp/src/NoahmpColumnResetMod.o noahmp/src/NoahmpGpuDataMod.o \
+  noahmp/src/ConfigVarInitMod.o noahmp/src/ForcingVarInitMod.o noahmp/src/EnergyVarInitMod.o \
+  noahmp/src/WaterVarInitMod.o noahmp/src/BiochemVarInitMod.o noahmp/src/NoahmpColumnFinalizeMod.o
+
+.PHONY: gpu-probe
+gpu-probe:
+ifeq ($(ACCELERATOR),gpu)
+	$(MAKE) -C noahmp/utility ACCELERATOR=$(ACCELERATOR) Machine.o
+	$(MAKE) -C noahmp/src ACCELERATOR=$(ACCELERATOR) NoahmpGpuDataMod.o ConfigVarInitMod.o ForcingVarInitMod.o EnergyVarInitMod.o WaterVarInitMod.o BiochemVarInitMod.o NoahmpColumnFinalizeMod.o
+	$(CPP) $(CPPFLAGS) porting/noahmp_gpu_mapping_probe.F90 > porting/noahmp_gpu_mapping_probe.f90
+	$(COMPILERF90) $(F90FLAGS) $(FREESOURCE) -Inoahmp/src -Inoahmp/utility \
+	  porting/noahmp_gpu_mapping_probe.f90 $(PROBE_OBJS) $(ACC_LDFLAGS) -o noahmp_gpu_mapping_probe
+else
+	$(error gpu-probe requires ACCELERATOR=gpu)
+endif
