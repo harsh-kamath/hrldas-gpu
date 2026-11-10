@@ -1,5 +1,3 @@
-> **GPU development handoff:** this tree includes the offline HRLDAS OpenACC port through checkpoint 6, reconciled with the supplied community updates. See [GPU_PORT_HANDOFF.md](GPU_PORT_HANDOFF.md) for scope, validation status and build instructions.
-
 [![DOI](https://zenodo.org/badge/261594454.svg)](https://zenodo.org/badge/latestdoi/261594454)
 
 
